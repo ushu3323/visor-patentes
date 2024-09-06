@@ -70,8 +70,6 @@ while True:
     # Comprueba si se presiono la tecla "q"
     if cv2.waitKey(1) == ord('q'):
         break
-    elif cv2.waitKey(1) == ord('h'):
-        tkinter.messagebox.showinfo("Titulo", "Hello world!")
 
 camara.release()
 cv2.destroyAllWindows()
