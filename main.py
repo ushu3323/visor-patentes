@@ -1,13 +1,19 @@
 # Sirve para recibir imagen de la camara y manipularla
 import cv2
 import pytesseract
-
+import tkinter.messagebox as messagebox
 
 ASPECT_RATIO_PATENTE = 2.5
 
 # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 # Crear variable para tener acceso a la camara
 camara = cv2.VideoCapture(0)
+
+base_de_datos = [
+    ["CE 350 NT", '"La vida es muy peligrosa. No por las personas que hacen el mal, sino por la que se sientan a ver lo que pasa"\n- Albert Einstein'],
+    ["MA 112 PI", 'Hola Mundo']
+]
+
 
 while True:
     # Leer un fotograma de la camara
@@ -60,9 +66,14 @@ while True:
                 # Dibujar rectangulo verde en el fotograma de la camara
                 cv2.rectangle(fotograma, (x,y), (x+w, y+h), (0,255,0), 3)
 
+                # Leer texto de la patente
                 texto_patente: str = pytesseract.image_to_string(placa, config="--psm 11")
-                print("TEXTO PATENTE:", texto_patente)
+                print(f">{texto_patente}<")
 
+                for fila in base_de_datos:
+                    patente = fila[0]
+                    if patente in texto_patente:
+                        messagebox.showinfo(message=fila[1])
 
 
     cv2.imshow("Camara Web", fotograma) # Muestra un fotograma en una ventana
