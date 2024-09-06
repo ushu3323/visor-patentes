@@ -58,14 +58,14 @@ while True:
                 cv2.moveWindow("PLACA", 800, 10)
 
                 # Dibujar rectangulo verde en el fotograma de la camara
-                cv2.rectangle(canny, (x,y), (x+w, y+h), (0,255,0), 3)
+                cv2.rectangle(fotograma, (x,y), (x+w, y+h), (0,255,0), 3)
 
                 texto_patente: str = pytesseract.image_to_string(placa, config="--psm 11")
                 print("TEXTO PATENTE:", texto_patente)
 
 
 
-    cv2.imshow("Camara Web", canny) # Muestra un fotograma en una ventana
+    cv2.imshow("Camara Web", fotograma) # Muestra un fotograma en una ventana
 
     # Comprueba si se presiono la tecla "q"
     if cv2.waitKey(1) == ord('q'):
