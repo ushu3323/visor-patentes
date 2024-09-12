@@ -1,3 +1,4 @@
+from tkinter.font import BOLD
 import cv2
 import pytesseract
 import tkinter as tk
@@ -9,13 +10,14 @@ ASPECT_RATIO_PATENTE = 2.5
 
 #controlar tamaños de la ventana y camara
 TAMANO_VENTANA = (900, 700)
-ANCHO_CAMARA = 500
-ALTO_CAMARA = 300
+ANCHO_CAMARA = 800
+ALTO_CAMARA = 600 
 
 # Base de datos de patentes y textos asociados
 base_de_datos = [
     ["CE 350 NT", '"La vida es muy peligrosa. No por las personas que hacen el mal, sino por la que se sientan a ver lo que pasa"\n- Albert Einstein'],
-    ["MA 112 PI", 'Hola Mundo']
+    ["DC 321 BA", '"El único modo de hacer un gran trabajo es amar lo que haces"\n- Steve Jobs -'],
+    ["AB 123 CD", '"El éxito es la suma de pequeños esfuerzos repetidos día tras día"\n- Robert Collider -'],
 ]
 
 # Función para procesar el fotograma y detectar la patente
@@ -70,7 +72,7 @@ def procesar_fotograma():
                 for fila in base_de_datos:
                     patente = fila[0]
                     if patente in texto_patente:
-                        lbl_patente_detectada.config(text=texto_patente)
+                        lbl_patente_detectada.config(text=texto_patente.strip())
                         lbl_texto_asociado.config(text=fila[1])
 
     # Mostrar la imagen de la cámara en la interfaz
@@ -90,7 +92,7 @@ ventana.title("VISOR DE PATENTES")
 ventana.geometry(f"{TAMANO_VENTANA[0]}x{TAMANO_VENTANA[1]}")  # Establecer el tamaño de la ventana o puedes tocar la linea 11
 
 # Centrar ventana en la pantalla
-def centrar_ventana(ventana):
+def centrar_ventana(ventana: tk.Tk):
     ventana.update_idletasks()
     ancho = ventana.winfo_width()
     alto = ventana.winfo_height()
@@ -99,6 +101,7 @@ def centrar_ventana(ventana):
     x = (pantalla_ancho - ancho) // 2
     y = (pantalla_alto - alto) // 2
     ventana.geometry(f"{ancho}x{alto}+{x}+{y}")
+    ventana.wm_state("zoomed")
 
 centrar_ventana(ventana)
 
@@ -114,45 +117,48 @@ def redondear_logo(ruta):
     return img
 
 # Cargar la imagen del logo
-logo_img = redondear_logo("C:/Users/aguer/Desktop/visor-patentes/Head.png")
+logo_img = redondear_logo("./Head.png")
 logo_tk = ImageTk.PhotoImage(logo_img)
 
 # Crear encabezado
-encabezado = tk.Frame(ventana, bg='lightgrey')
+encabezado = tk.Frame(ventana, bg="white")
 encabezado.grid(row=0, column=0, columnspan=2, sticky="ew")
 
-logo_label = Label(encabezado, image=logo_tk, bg='lightgrey')
+logo_label = Label(encabezado, image=logo_tk, border=0)
 logo_label.grid(row=0, column=0, padx=80, pady=5, sticky="w")
 
 encabezado_texto = tk.Label(encabezado, text="CENT 35 - PROF. JULIAN JOSÉ GODOY\nINSTITUTO DE EDUCACIÓN SUPERIOR TÉCNICA", 
-font=("Arial", 14), bg='lightgrey', anchor="center", justify="center")
+font=("Arial", 14), anchor="center", justify="center", bg="white")
 encabezado_texto.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+
+encabezado.columnconfigure(1, weight=1)
 
 # Agregar texto adicional
 texto_adicional = tk.Label(ventana, text="CURSO 1° AÑO\nCARRERA: DISEÑO DE SOFTWARE", 
-                           font=("Arial", 12, 'bold'), bg='lightgrey', anchor="center", justify="center")
+                           font=("Arial", 12, 'bold'), anchor="center", justify="center")
 texto_adicional.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 
 # Crear widgets de la interfaz
-frame_camara = tk.Frame(ventana, bg='white')
+frame_camara = tk.Frame(ventana)
 frame_camara.grid(row=2, column=0, rowspan=2, padx=10, pady=10, sticky="nsew")
 
-lbl_camara = Label(frame_camara, bg='white')
+lbl_camara = Label(frame_camara)
 lbl_camara.pack(fill="both", expand=True)
 
 frame_patente = LabelFrame(ventana, text="PATENTE DETECTADA", padx=10, pady=10)
-lbl_patente_detectada = Label(frame_patente, text="No detectada aún", anchor="center", font=("Arial", 12))
+lbl_patente_detectada = Label(frame_patente, text="No detectada aún", anchor="center", font=("Arial", 25, BOLD))
 lbl_patente_detectada.pack(fill="both")
 frame_patente.grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
 
 frame_texto = LabelFrame(ventana, text="TEXTO ASOCIADO", padx=10, pady=10)
-lbl_texto_asociado = Label(frame_texto, text="Esperando detección...", anchor="center", font=("Arial", 12))
+lbl_texto_asociado = Label(frame_texto, text="Esperando detección...", anchor="center", font=("Arial", 20), justify="center")
+lbl_texto_asociado.bind('<Configure>', lambda e: lbl_texto_asociado.config(wraplength=lbl_texto_asociado.winfo_width()))
 lbl_texto_asociado.pack(fill="both")
 frame_texto.grid(row=3, column=1, padx=10, pady=10, sticky="nsew")
 
 # Crear pie de página
-pie_pagina = tk.Label(ventana, text="ESTUDIANTES:\n• PAVÓN, Carlos Eduardo\n• PAVÓN, Matías Ignacio\n• AGÜERO, Luis\n• Omar", 
-                      font=("Arial", 10), padx=10, pady=10, bg='lightgrey', anchor="w")
+pie_pagina = tk.Label(ventana, text="ESTUDIANTES:\n• PAVÓN, Carlos Eduardo\n• PAVÓN, Matías Ignacio\n• AGÜERO, Luis\n• OYARZÚN, Omar", 
+                      font=("Arial", 10), padx=10, pady=10, anchor="w", justify="left")
 pie_pagina.grid(row=4, column=0, columnspan=2, pady=10, sticky="ew")
 
 # Ajustar el tamaño de las columnas y filas
@@ -167,11 +173,10 @@ camara = cv2.VideoCapture(0)
 
 
 # Iniciar el procesamiento de la cámaras
-procesar_fotograma()
-
+ventana.after('idle', procesar_fotograma)
 
 # evitar que se toque el tamaño de la ventana
-ventana.resizable(False, False)         
+# ventana.resizable(False, False)         
 
 
 # Ejecutar la ventana de Tkinter
